@@ -1,0 +1,8 @@
+# Compiled class file
+*.class
+
+# Intellij
+.idea
+*.iws
+*.iml
+*.ipr
