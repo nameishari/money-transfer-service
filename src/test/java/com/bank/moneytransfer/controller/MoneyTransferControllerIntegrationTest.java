@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 
+import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -22,17 +23,7 @@ class MoneyTransferControllerIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void testShouldCreateAccount() {
-        //@formatter:off
-        String id = when()
-                     .post("/account").prettyPeek()
-                 .then()
-                     .statusCode(HttpStatus.CREATED_201)
-                     .body("id", notNullValue())
-                     .body("balance", is(BigDecimal.ZERO.intValue()))
-                     .extract()
-                     .jsonPath()
-                     .get("id");
-        //@formatter:on
+        String id = createAccount();
 
         UUID createdAccountId = UUID.fromString(id);
         Optional<Account> optionalAccount = accountRepository.findOneById(createdAccountId);
@@ -40,5 +31,34 @@ class MoneyTransferControllerIntegrationTest extends AbstractIntegrationTest {
         Account account = optionalAccount.get();
         assertThat(account.getId(), is(createdAccountId));
         assertThat(account.getBalance(), is(BigDecimal.ZERO));
+    }
+
+    @Test
+    void testShouldGetAccount() {
+        String id = createAccount();
+        //@formatter:off
+        given()
+            .pathParam("id", id)
+        .when()
+            .get("/account/{id}").prettyPeek()
+        .then()
+            .statusCode(HttpStatus.OK_200)
+            .body("id", is(id))
+            .body("balance", is(BigDecimal.ZERO.intValue()));
+        //@formatter:on
+    }
+
+    private String createAccount() {
+        //@formatter:off
+        return when()
+                  .post("/account").prettyPeek()
+              .then()
+                  .statusCode(HttpStatus.CREATED_201)
+                  .body("id", notNullValue())
+                  .body("balance", is(BigDecimal.ZERO.intValue()))
+                  .extract()
+                  .jsonPath()
+                  .get("id");
+        //@formatter:on
     }
 }
