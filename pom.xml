@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.task</groupId>
+    <groupId>com.bank.moneytransfer</groupId>
     <artifactId>money-transfer-service</artifactId>
     <version>1.0-SNAPSHOT</version>
 
@@ -21,7 +21,7 @@
         <sparkjava.version>2.8.0</sparkjava.version>
         <jooq.version>3.12.3</jooq.version>
         <lombok.version>1.18.10</lombok.version>
-        <h2.version>1.4.200</h2.version>
+        <h2.version>1.4.199</h2.version>
         <flyway.version>6.0.8</flyway.version>
         <jackson.version>2.10.1</jackson.version>
         <log4j.version>2.12.1</log4j.version>
@@ -30,6 +30,10 @@
         <rest-assured.version>4.1.2</rest-assured.version>
         <hamcrest.version>2.1</hamcrest.version>
         <junit-jupiter.version>5.5.2</junit-jupiter.version>
+
+        <!-- In memory database details -->
+        <db.url>jdbc:h2:~/money-transfer-service</db.url>
+        <db.username>sa</db.username>
     </properties>
 
     <dependencies>
@@ -52,6 +56,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq-codegen</artifactId>
+            <version>3.12.3</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
@@ -61,6 +71,12 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.9</version>
         </dependency>
 
         <dependency>
@@ -110,4 +126,95 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jooq</groupId>
+                <artifactId>jooq-codegen-maven</artifactId>
+                <version>${jooq.version}</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <jdbc>
+                        <url>${db.url}</url>
+                        <user>${db.username}</user>
+                    </jdbc>
+                    <generator>
+                        <generate>
+                            <pojos>false</pojos>
+                            <daos>true</daos>
+                            <pojosEqualsAndHashCode>true</pojosEqualsAndHashCode>
+                            <javaTimeTypes>true</javaTimeTypes>
+                        </generate>
+                        <database>
+                            <includes>.*</includes>
+                            <inputSchema>PUBLIC</inputSchema>
+                        </database>
+                        <target>
+                            <packageName>com.bank.moneytransfer.jooq</packageName>
+                            <directory>src/main/h2-jooq</directory>
+                        </target>
+                    </generator>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>${flyway.version}</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>migrate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <url>${db.url}</url>
+                    <user>${db.username}</user>
+                    <locations>
+                        <location>filesystem:src/main/resources/db/migration</location>
+                    </locations>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <mainClass>com.bank.moneytransfer.Initializer</mainClass>
+                                </manifest>
+                                <manifestEntries>
+                                    <Multi-Release>true</Multi-Release>
+                                </manifestEntries>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <appendAssemblyId>false</appendAssemblyId>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.0</version>
+            </plugin>
+        </plugins>
+    </build>
 </project>
