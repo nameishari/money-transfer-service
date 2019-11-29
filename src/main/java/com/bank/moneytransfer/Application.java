@@ -7,7 +7,7 @@ import com.bank.moneytransfer.exception.NotFoundException;
 import com.bank.moneytransfer.repository.AccountRepository;
 import com.bank.moneytransfer.repository.TransferRepository;
 import com.bank.moneytransfer.service.MoneyTransferService;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.bank.moneytransfer.utils.JsonUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
@@ -24,7 +24,7 @@ import static spark.Spark.*;
 @Slf4j
 public final class Application {
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private final MoneyTransferController moneyTransferController;
     private final int port;
@@ -69,15 +69,7 @@ public final class Application {
         var fields = new HashMap<String, String>();
         fields.put("reason", exception.getMessage());
         fields.put("exception", exception.getClass().getName());
-        return toJson(fields);
-    }
-
-    private String toJson(Object value) {
-        try {
-            return OBJECT_MAPPER.writeValueAsString(value);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(String.format("Failed to make a json for %s", value), e);
-        }
+        return JsonUtils.toJson(fields);
     }
 
     void stopServer() {
