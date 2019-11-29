@@ -2,9 +2,9 @@ package com.bank.moneytransfer.controller;
 
 import com.bank.moneytransfer.AbstractIntegrationTest;
 import com.bank.moneytransfer.domain.Account;
+import com.bank.moneytransfer.dto.request.CreateAccountRequest;
 import com.bank.moneytransfer.repository.AccountRepository;
 import org.eclipse.jetty.http.HttpStatus;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -12,7 +12,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
-import static io.restassured.RestAssured.when;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -73,8 +72,11 @@ class MoneyTransferControllerIntegrationTest extends AbstractIntegrationTest {
     }
 
     private String createAccount() {
+        CreateAccountRequest request = new CreateAccountRequest(BigDecimal.ZERO);
         //@formatter:off
-        return when()
+        return given()
+                   .body(request)
+              .when()
                   .post("/account").prettyPeek()
               .then()
                   .statusCode(HttpStatus.CREATED_201)
