@@ -48,6 +48,30 @@ class MoneyTransferControllerIntegrationTest extends AbstractIntegrationTest {
         //@formatter:on
     }
 
+    @Test
+    void testShouldThrowNotFoundForRequestingInvalidAccount() {
+        //@formatter:off
+        given()
+            .pathParam("id", UUID.randomUUID())
+        .when()
+            .get("/account/{id}").prettyPeek()
+        .then()
+            .statusCode(HttpStatus.NOT_FOUND_404);
+        //@formatter:on
+    }
+
+    @Test
+    void testShouldThrowBadRequestForRequestingWithInvalidUUID() {
+        //@formatter:off
+        given()
+            .pathParam("id", "1234")
+        .when()
+            .get("/account/{id}").prettyPeek()
+        .then()
+            .statusCode(HttpStatus.BAD_REQUEST_400);
+        //@formatter:on
+    }
+
     private String createAccount() {
         //@formatter:off
         return when()
