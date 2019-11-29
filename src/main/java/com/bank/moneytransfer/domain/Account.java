@@ -12,9 +12,9 @@ public final class Account {
 
     //For simplicity Account domain contains only id and balance
 
-    private final UUID id;
+    private UUID id;
 
-    private final BigDecimal balance;
+    private BigDecimal balance;
 
     public static Account newAccount() {
         return new Account(UUID.randomUUID(), BigDecimal.ZERO);
