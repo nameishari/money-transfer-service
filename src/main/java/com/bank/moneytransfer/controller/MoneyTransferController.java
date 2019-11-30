@@ -11,6 +11,7 @@ import org.eclipse.jetty.http.HttpStatus;
 import spark.Request;
 import spark.Response;
 
+import java.util.List;
 import java.util.UUID;
 import static com.bank.moneytransfer.utils.JsonUtils.fromJson;
 import static com.bank.moneytransfer.validation.ValidationUtils.validateRequestUntilFirstError;
@@ -29,14 +30,19 @@ public class MoneyTransferController {
     }
 
     public Account getAccount(Request request, Response response) {
-        UUID id = getUUIDFromString(request.params("id"));
-        return moneyTransferService.getAccount(id);
+        UUID accountId = getUUIDFromString(request.params("id"));
+        return moneyTransferService.getAccount(accountId);
     }
 
     public Transfer transfer(Request request, Response response) {
         TransferRequest transferRequest = fromJson(request.body(), TransferRequest.class);
         validateRequestUntilFirstError(transferRequest, TransferRequest.VALIDATION_RULES);
         return moneyTransferService.makeTransfer(transferRequest);
+    }
+
+    public List<Transfer> getTransfers(Request request, Response response) {
+        UUID accountId = getUUIDFromString(request.params("id"));
+        return moneyTransferService.getTransfers(accountId);
     }
 
     private static UUID getUUIDFromString(String uuidString) {

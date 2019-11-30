@@ -11,6 +11,7 @@ import com.bank.moneytransfer.repository.TransferRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -36,7 +37,12 @@ public final class MoneyTransferService {
         Transfer transfer = Transfer.newTransfer(request.getDestinationAccountId(), request.getSourceAccountId(), request.getAmount());
         transferRepository.persist(transfer);
         executeTransfer(transfer);
+        log.info("Transferred money from {} to {}", transfer.getSourceAccountId(), transfer.getDestinationAccountId());
         return transferRepository.findOneById(transfer.getId());
+    }
+
+    public List<Transfer> getTransfers(final UUID accountId) {
+        return transferRepository.findAllTransfersBySourceAccountId(accountId);
     }
 
     private void executeTransfer(final Transfer transfer) {

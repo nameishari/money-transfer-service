@@ -30,29 +30,29 @@ public class AccountRepository {
                 .execute();
     }
 
-    public Account findOneById(UUID id) {
+    public Account findOneById(final UUID id) {
         return jooqContext.selectFrom(Tables.ACCOUNT)
                 .where(Tables.ACCOUNT.ID.eq(id))
                 .fetchOptional(r -> new Account(r.getId(), r.getBalance()))
                 .orElseThrow(() -> new NotFoundException(String.format("Account %s not found", id)));
     }
 
-    public void executeTransfer(Transfer transfer) {
+    public void executeTransfer(final Transfer transfer) {
         jooqContext.transaction(configuration -> {
             DSLContext context = DSL.using(configuration);
 
-            Map<UUID, Account> lockAccounts = context.selectFrom(Tables.ACCOUNT)
+            Map<UUID, Account> lockedAccounts = context.selectFrom(Tables.ACCOUNT)
                     .where(Tables.ACCOUNT.ID.in(asList(transfer.getDestinationAccountId(), transfer.getSourceAccountId()))).forUpdate()
                     .fetch(r -> new Account(r.getId(), r.getBalance()))
                     .stream()
                     .collect(Collectors.toMap(Account::getId, Function.identity()));
 
-            updateBalance(context, lockAccounts.get(transfer.getSourceAccountId()), transfer.getAmount().negate());
-            updateBalance(context, lockAccounts.get(transfer.getDestinationAccountId()), transfer.getAmount());
+            updateBalance(context, lockedAccounts.get(transfer.getSourceAccountId()), transfer.getAmount().negate());
+            updateBalance(context, lockedAccounts.get(transfer.getDestinationAccountId()), transfer.getAmount());
         });
     }
 
-    private void updateBalance(DSLContext context, Account account, BigDecimal amount) {
+    private void updateBalance(final DSLContext context, final Account account, final BigDecimal amount) {
         account.applyTransfer(amount);
         context.update(Tables.ACCOUNT)
                 .set(Tables.ACCOUNT.BALANCE, account.getBalance())

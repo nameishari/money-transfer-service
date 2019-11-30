@@ -1,15 +1,14 @@
 package com.bank.moneytransfer.domain;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Getter
-@Setter
 @AllArgsConstructor
-@ToString
 public class Transfer {
 
     private UUID id;
