@@ -10,9 +10,8 @@ import java.util.EnumSet;
 public enum TransferStatus {
 
     OPEN(0),
-    SOURCE_DEBITED(1),
-    NOT_ENOUGH_FUNDS(2),
-    DONE(4),
+    NOT_ENOUGH_FUNDS(1),
+    DONE(2),
     ;
 
     private int code;
