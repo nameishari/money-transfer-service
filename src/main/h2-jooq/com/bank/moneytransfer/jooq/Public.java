@@ -6,6 +6,7 @@ package com.bank.moneytransfer.jooq;
 
 import com.bank.moneytransfer.jooq.tables.Account;
 import com.bank.moneytransfer.jooq.tables.FlywaySchemaHistory;
+import com.bank.moneytransfer.jooq.tables.Transfer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +32,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Public extends SchemaImpl {
 
-    private static final long serialVersionUID = -1554566074;
+    private static final long serialVersionUID = 434070250;
 
     /**
      * The reference instance of <code>PUBLIC</code>
@@ -42,6 +43,11 @@ public class Public extends SchemaImpl {
      * The table <code>PUBLIC.ACCOUNT</code>.
      */
     public final Account ACCOUNT = com.bank.moneytransfer.jooq.tables.Account.ACCOUNT;
+
+    /**
+     * The table <code>PUBLIC.TRANSFER</code>.
+     */
+    public final Transfer TRANSFER = com.bank.moneytransfer.jooq.tables.Transfer.TRANSFER;
 
     /**
      * The table <code>PUBLIC.flyway_schema_history</code>.
@@ -71,6 +77,7 @@ public class Public extends SchemaImpl {
     private final List<Table<?>> getTables0() {
         return Arrays.<Table<?>>asList(
             Account.ACCOUNT,
+            Transfer.TRANSFER,
             FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY);
     }
 }

@@ -6,6 +6,7 @@ package com.bank.moneytransfer.jooq;
 
 import com.bank.moneytransfer.jooq.tables.Account;
 import com.bank.moneytransfer.jooq.tables.FlywaySchemaHistory;
+import com.bank.moneytransfer.jooq.tables.Transfer;
 
 import javax.annotation.processing.Generated;
 
@@ -32,6 +33,9 @@ public class Indexes {
     // -------------------------------------------------------------------------
 
     public static final Index PRIMARY_KEY_E = Indexes0.PRIMARY_KEY_E;
+    public static final Index PRIMARY_KEY_7 = Indexes0.PRIMARY_KEY_7;
+    public static final Index TRANSFER_DESTINATION_ACCOUNT_ID_FK_INDEX_7 = Indexes0.TRANSFER_DESTINATION_ACCOUNT_ID_FK_INDEX_7;
+    public static final Index TRANSFER_SOURCE_ACCOUNT_ID_FK_INDEX_7 = Indexes0.TRANSFER_SOURCE_ACCOUNT_ID_FK_INDEX_7;
     public static final Index PRIMARY_KEY_6 = Indexes0.PRIMARY_KEY_6;
     public static final Index FLYWAY_SCHEMA_HISTORY_S_IDX = Indexes0.FLYWAY_SCHEMA_HISTORY_S_IDX;
 
@@ -41,6 +45,9 @@ public class Indexes {
 
     private static class Indexes0 {
         public static Index PRIMARY_KEY_E = Internal.createIndex("PRIMARY_KEY_E", Account.ACCOUNT, new OrderField[] { Account.ACCOUNT.ID }, true);
+        public static Index PRIMARY_KEY_7 = Internal.createIndex("PRIMARY_KEY_7", Transfer.TRANSFER, new OrderField[] { Transfer.TRANSFER.ID }, true);
+        public static Index TRANSFER_DESTINATION_ACCOUNT_ID_FK_INDEX_7 = Internal.createIndex("TRANSFER_DESTINATION_ACCOUNT_ID_FK_INDEX_7", Transfer.TRANSFER, new OrderField[] { Transfer.TRANSFER.DESTINATION_ACCOUNT_ID }, false);
+        public static Index TRANSFER_SOURCE_ACCOUNT_ID_FK_INDEX_7 = Internal.createIndex("TRANSFER_SOURCE_ACCOUNT_ID_FK_INDEX_7", Transfer.TRANSFER, new OrderField[] { Transfer.TRANSFER.SOURCE_ACCOUNT_ID }, false);
         public static Index PRIMARY_KEY_6 = Internal.createIndex("PRIMARY_KEY_6", FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY, new OrderField[] { FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY.INSTALLED_RANK }, true);
         public static Index FLYWAY_SCHEMA_HISTORY_S_IDX = Internal.createIndex("flyway_schema_history_s_idx", FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY, new OrderField[] { FlywaySchemaHistory.FLYWAY_SCHEMA_HISTORY.SUCCESS }, false);
     }

@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public final class ValidationUtils {
 
-    public static <T> void validateUntilFirstError(T request, List<ValidationRule<T>> rules) {
+    public static <T> void validateRequestUntilFirstError(T request, List<ValidationRule<T>> rules) {
         Optional<ValidationRule<T>> firstFailedRule = rules.stream()
                 .filter(rule -> rule.getRule().test(request))
                 .findFirst();

@@ -1,7 +1,9 @@
 package com.bank.moneytransfer.controller;
 
 import com.bank.moneytransfer.domain.Account;
+import com.bank.moneytransfer.domain.Transfer;
 import com.bank.moneytransfer.dto.request.CreateAccountRequest;
+import com.bank.moneytransfer.dto.request.TransferRequest;
 import com.bank.moneytransfer.exception.BadRequestException;
 import com.bank.moneytransfer.service.MoneyTransferService;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +13,7 @@ import spark.Response;
 
 import java.util.UUID;
 import static com.bank.moneytransfer.utils.JsonUtils.fromJson;
-import static com.bank.moneytransfer.validation.ValidationUtils.validateUntilFirstError;
+import static com.bank.moneytransfer.validation.ValidationUtils.validateRequestUntilFirstError;
 
 @RequiredArgsConstructor
 public class MoneyTransferController {
@@ -19,9 +21,9 @@ public class MoneyTransferController {
     private final MoneyTransferService moneyTransferService;
 
     public Account createAccount(Request request, Response response) {
-        CreateAccountRequest requestDTO = fromJson(request.body(), CreateAccountRequest.class);
-        validateUntilFirstError(requestDTO, CreateAccountRequest.VALIDATION_RULES);
-        Account account = moneyTransferService.createAccount(requestDTO);
+        CreateAccountRequest createAccountRequest = fromJson(request.body(), CreateAccountRequest.class);
+        validateRequestUntilFirstError(createAccountRequest, CreateAccountRequest.VALIDATION_RULES);
+        Account account = moneyTransferService.createAccount(createAccountRequest);
         response.status(HttpStatus.CREATED_201);
         return account;
     }
@@ -29,6 +31,12 @@ public class MoneyTransferController {
     public Account getAccount(Request request, Response response) {
         UUID id = getUUIDFromString(request.params("id"));
         return moneyTransferService.getAccount(id);
+    }
+
+    public Transfer transfer(Request request, Response response) {
+        TransferRequest transferRequest = fromJson(request.body(), TransferRequest.class);
+        validateRequestUntilFirstError(transferRequest, TransferRequest.VALIDATION_RULES);
+        return moneyTransferService.makeTransfer(transferRequest);
     }
 
     private static UUID getUUIDFromString(String uuidString) {
