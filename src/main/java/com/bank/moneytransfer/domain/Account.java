@@ -1,5 +1,7 @@
 package com.bank.moneytransfer.domain;
 
+import com.bank.moneytransfer.exception.NotEnoughFundsException;
+import com.bank.moneytransfer.utils.BigDecimalUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -18,5 +20,13 @@ public final class Account {
 
     public static Account createAccount(BigDecimal balance) {
         return new Account(UUID.randomUUID(), balance);
+    }
+
+    public void applyTransfer(BigDecimal amount) {
+        BigDecimal balanceAfterTransfer = balance.add(amount);
+        if (BigDecimalUtils.isNegative(balanceAfterTransfer)) {
+            throw new NotEnoughFundsException(String.format("Account %s does not have enough funds to process this transfer", id));
+        }
+        this.balance = balanceAfterTransfer;
     }
 }

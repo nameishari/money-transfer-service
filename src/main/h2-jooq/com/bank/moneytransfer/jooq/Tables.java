@@ -6,6 +6,7 @@ package com.bank.moneytransfer.jooq;
 
 import com.bank.moneytransfer.jooq.tables.Account;
 import com.bank.moneytransfer.jooq.tables.FlywaySchemaHistory;
+import com.bank.moneytransfer.jooq.tables.Transfer;
 
 import javax.annotation.processing.Generated;
 
@@ -27,6 +28,11 @@ public class Tables {
      * The table <code>PUBLIC.ACCOUNT</code>.
      */
     public static final Account ACCOUNT = Account.ACCOUNT;
+
+    /**
+     * The table <code>PUBLIC.TRANSFER</code>.
+     */
+    public static final Transfer TRANSFER = Transfer.TRANSFER;
 
     /**
      * The table <code>PUBLIC.flyway_schema_history</code>.
