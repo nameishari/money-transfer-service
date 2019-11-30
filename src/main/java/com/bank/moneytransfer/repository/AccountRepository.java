@@ -9,8 +9,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 
@@ -35,35 +39,26 @@ public class AccountRepository {
 
     public void executeTransfer(Transfer transfer) {
         jooqContext.transaction(configuration -> {
+            log.info("transfer -> {}", transfer);
             DSLContext context = DSL.using(configuration);
-            lockAccounts(context, asList(transfer.getDestinationAccountId(), transfer.getSourceAccountId()));
-            debitSourceAccountBalance(context, transfer);
-            creditDestinationAccountBalance(context, transfer);
+
+            Map<UUID, Account> lockAccounts = context.selectFrom(Tables.ACCOUNT)
+                    .where(Tables.ACCOUNT.ID.in(asList(transfer.getDestinationAccountId(), transfer.getSourceAccountId()))).forUpdate()
+                    .fetch(r -> new Account(r.getId(), r.getBalance()))
+                    .stream()
+                    .collect(Collectors.toMap(Account::getId, Function.identity()));
+
+            updateBalance(context, lockAccounts.get(transfer.getSourceAccountId()), transfer.getAmount().negate());
+            updateBalance(context, lockAccounts.get(transfer.getDestinationAccountId()), transfer.getAmount());
         });
     }
 
-    private void debitSourceAccountBalance(final DSLContext context, final Transfer transfer) {
-            Account account = findOneById(transfer.getSourceAccountId());
-            account.applyTransfer(transfer.getAmount().negate());
-            updateBalance(context, account);
-    }
-
-    private void creditDestinationAccountBalance(final DSLContext context, final Transfer transfer) {
-            Account account = findOneById(transfer.getDestinationAccountId());
-            account.applyTransfer(transfer.getAmount());
-            updateBalance(context, account);
-    }
-
-    private void updateBalance(DSLContext context, Account account) {
+    private void updateBalance(DSLContext context, Account account, BigDecimal amount) {
+        account.applyTransfer(amount);
         context.update(Tables.ACCOUNT)
                 .set(Tables.ACCOUNT.BALANCE, account.getBalance())
                 .where(Tables.ACCOUNT.ID.eq(account.getId()))
                 .execute();
     }
 
-    private void lockAccounts(final DSLContext context, final List<UUID> accountIds) {
-        context.selectFrom(Tables.ACCOUNT)
-                .where(Tables.ACCOUNT.ID.in(accountIds)).forUpdate()
-                .execute();
-    }
 }
