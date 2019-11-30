@@ -10,7 +10,7 @@ Simple RESTful API for transfering money between two accounts.
   <li>JOOQ</li>
   <li>H2 as in-memory database</li>
   <li>Junit and Rest Assured</li>
-<ul>
+</ul>
 
 ## Endpoints
 * `POST` /account - Creates an acccount
