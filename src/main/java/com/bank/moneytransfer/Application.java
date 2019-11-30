@@ -46,6 +46,7 @@ public final class Application {
         post("/account", moneyTransferController::createAccount, OBJECT_MAPPER::writeValueAsString);
         get("/account/:id", moneyTransferController::getAccount, OBJECT_MAPPER::writeValueAsString);
         post("/account/:id/transfer", moneyTransferController::transfer, OBJECT_MAPPER::writeValueAsString);
+        get("/account/:id/transfer", moneyTransferController::getTransfers, OBJECT_MAPPER::writeValueAsString);
         after((request, response) -> response.type("application/json"));
         before((request, response) -> log.info("{} {}", request.requestMethod(), request.url()));
 

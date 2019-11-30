@@ -8,6 +8,7 @@ import com.bank.moneytransfer.dto.request.CreateAccountRequest;
 import com.bank.moneytransfer.dto.request.TransferRequest;
 import com.bank.moneytransfer.repository.AccountRepository;
 import org.eclipse.jetty.http.HttpStatus;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -20,10 +21,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.containsStringIgnoringCase;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.CoreMatchers.notNullValue;
 
 class MoneyTransferControllerIntegrationTest extends AbstractIntegrationTest {
 
@@ -181,7 +180,7 @@ class MoneyTransferControllerIntegrationTest extends AbstractIntegrationTest {
         UUID account2 = UUID.fromString(createAccount(BigDecimal.valueOf(400)));
         TransferRequest account1Request = new TransferRequest(account1, account2, BigDecimal.valueOf(40));
         TransferRequest account2Request = new TransferRequest(account2, account1, BigDecimal.valueOf(10));
-        //When the transfer requests executes parallely
+        //When the transfer requests executes parallelly
         try {
             final ExecutorService executor = Executors.newScheduledThreadPool(2);
             Collection<Callable<Transfer>> tasks = new ArrayList<>();
@@ -197,7 +196,36 @@ class MoneyTransferControllerIntegrationTest extends AbstractIntegrationTest {
         assertThat(accountRepository.findOneById(account2).getBalance(), is(BigDecimal.valueOf(370)));
     }
 
+    @Test
+    void testShouldGetAllTransfersForAnAccount() {
+        UUID account1 = UUID.fromString(createAccount(BigDecimal.valueOf(350)));
+        UUID account2 = UUID.fromString(createAccount(BigDecimal.valueOf(400)));
+        TransferRequest transferRequest = new TransferRequest(account1, account2, BigDecimal.valueOf(10));
+        for (int i = 0; i < 20; i++) {
+            //@formatter:off
+            given()
+                .pathParam("id", account2)
+                .body(transferRequest)
+            .when()
+                .post("/account/{id}/transfer").prettyPeek()
+            .then()
+                .statusCode(HttpStatus.OK_200);
+            //@formatter:on
+        }
+        //@formatter:off
+        given()
+            .pathParam("id", account2)
+        .when()
+            .get("/account/{id}/transfer").prettyPeek()
+        .then()
+            .statusCode(HttpStatus.OK_200)
+            .body("size()", is(20))
+            .body("sourceAccountId", Matchers.hasItem(is(account2.toString())));
+        //@formatter:on
+    }
+
     private Transfer transferRequest(UUID accountId, TransferRequest request) {
+        //@formatter:off
         return given()
                     .pathParam("id", accountId)
                     .body(request)
@@ -206,6 +234,7 @@ class MoneyTransferControllerIntegrationTest extends AbstractIntegrationTest {
                .then()
                     .statusCode(HttpStatus.OK_200)
                     .extract().as(Transfer.class);
+        //@formatter:on
     }
 
     private void verifyErrorTransferRequest(TransferRequest transferRequest, int httpStatus, String reason) {

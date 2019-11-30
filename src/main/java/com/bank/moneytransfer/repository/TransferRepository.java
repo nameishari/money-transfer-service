@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
 
+import java.util.List;
 import java.util.UUID;
 import static com.bank.moneytransfer.domain.TransferStatus.valueOf;
 
@@ -38,11 +39,18 @@ public class TransferRepository {
         }
     }
 
-    public Transfer findOneById(UUID id) {
+    public Transfer findOneById(final UUID id) {
         return jooqContext.selectFrom(Tables.TRANSFER)
                 .where(Tables.TRANSFER.ID.eq(id))
                 .fetchOptional(r -> new Transfer(r.getId(), r.getDestinationAccountId(), r.getSourceAccountId(),
                         valueOf(r.getStatus()), r.getAmount(), r.getCreatedOn()))
                 .orElseThrow(() -> new  NotFoundException(String.format("Transfer %s doesn't exists to update transfer", id)));
+    }
+
+    public List<Transfer> findAllTransfersBySourceAccountId(final UUID accountId) {
+        return jooqContext.selectFrom(Tables.TRANSFER)
+                .where(Tables.TRANSFER.SOURCE_ACCOUNT_ID.eq(accountId))
+                .fetch(r -> new Transfer(r.getId(), r.getDestinationAccountId(), r.getSourceAccountId(),
+                        valueOf(r.getStatus()), r.getAmount(), r.getCreatedOn()));
     }
 }
