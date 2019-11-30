@@ -39,7 +39,6 @@ public class AccountRepository {
 
     public void executeTransfer(Transfer transfer) {
         jooqContext.transaction(configuration -> {
-            log.info("transfer -> {}", transfer);
             DSLContext context = DSL.using(configuration);
 
             Map<UUID, Account> lockAccounts = context.selectFrom(Tables.ACCOUNT)
