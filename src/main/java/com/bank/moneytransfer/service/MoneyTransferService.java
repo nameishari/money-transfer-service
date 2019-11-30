@@ -20,8 +20,8 @@ public final class MoneyTransferService {
     private final AccountRepository accountRepository;
     private final TransferRepository transferRepository;
 
-    public Account createAccount(final CreateAccountRequest requestDTO) {
-        var account = Account.createAccount(requestDTO.getBalance());
+    public Account createAccount(final CreateAccountRequest request) {
+        var account = Account.createAccount(request.getBalance());
         accountRepository.save(account);
         log.info("Created an account with id - {}", account.getId());
         return account;
@@ -35,24 +35,18 @@ public final class MoneyTransferService {
         validateAccountsForTransfer(request);
         Transfer transfer = Transfer.newTransfer(request.getDestinationAccountId(), request.getSourceAccountId(), request.getAmount());
         transferRepository.persist(transfer);
-        executeSourceTransfer(transfer);
-        executeDestinationTransfer(transfer);
+        executeTransfer(transfer);
         return transferRepository.findOneById(transfer.getId());
     }
 
-    private void executeSourceTransfer(final Transfer transfer) {
+    private void executeTransfer(final Transfer transfer) {
         try {
-            accountRepository.updateBalance(transfer.getSourceAccountId(), transfer.getAmount().negate());
-            transferRepository.updateStatus(TransferStatus.SOURCE_DEBITED, transfer.getId());
+            accountRepository.executeTransfer(transfer);
+            transferRepository.updateStatus(TransferStatus.DONE, transfer.getId());
         } catch (NotEnoughFundsException ex) {
             transferRepository.updateStatus(TransferStatus.NOT_ENOUGH_FUNDS, transfer.getId());
             throw ex;
         }
-    }
-
-    private void executeDestinationTransfer(final Transfer transfer) {
-        accountRepository.updateBalance(transfer.getDestinationAccountId(), transfer.getAmount());
-        transferRepository.updateStatus(TransferStatus.DONE, transfer.getId());
     }
 
     private void validateAccountsForTransfer(final TransferRequest request) {
