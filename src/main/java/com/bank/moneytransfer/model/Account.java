@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Getter
 @AllArgsConstructor
-public final class Account {
+public class Account {
 
     //For simplicity Account contains only id and balance
 

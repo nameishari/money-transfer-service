@@ -19,7 +19,7 @@ import static java.util.Arrays.asList;
 
 @Slf4j
 @RequiredArgsConstructor
-public class AccountRepository {
+public final class AccountRepository {
     private final DSLContext jooqContext;
 
     public void save(final Account account) {

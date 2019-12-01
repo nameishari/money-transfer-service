@@ -14,7 +14,7 @@ import static com.bank.moneytransfer.model.TransferStatus.valueOf;
 
 @Slf4j
 @RequiredArgsConstructor
-public class TransferRepository {
+public final class TransferRepository {
 
     private final DSLContext jooqContext;
 
