@@ -36,6 +36,9 @@ Simple RESTful API for transfering money between two accounts.
 This service is using maven wrapper, it is not necessary to have maven in the execution environment.
 
 ```./mvnw clean verify``` - to run tests
+
 ```./mvnw clean package``` - creates executable jar
+
 ```java -jar ./target/money-transfer-service-1.0-SNAPSHOT.jar``` - Running the executable jar on default port(8090)
+
 ```java -Dserver.port=8080 -jar ./target/money-transfer-service-1.0-SNAPSHOT.jar``` - If default port, 8090 already in use then it can be changed with server.port
