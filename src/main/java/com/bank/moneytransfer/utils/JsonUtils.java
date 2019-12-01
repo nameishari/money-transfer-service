@@ -18,7 +18,7 @@ public final class JsonUtils {
         try {
             return OBJECT_MAPPER.readValue(content, clazz);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed ", e);
+            throw new RuntimeException("Failed to convert to json", e);
         }
     }
 }
