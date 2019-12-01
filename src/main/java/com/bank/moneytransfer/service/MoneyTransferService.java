@@ -41,7 +41,7 @@ public final class MoneyTransferService {
      *   3.2) If funds are less update the status to NOT_ENOUGH_FUNDS and throw
      */
     public Transfer makeTransfer(final TransferRequest request) {
-        validateAccountsForTransfer(request);
+        checkIfAccountsExistsOrNot(request.getDestinationAccountId(), request.getSourceAccountId());
         Transfer transfer = Transfer.newTransfer(request.getDestinationAccountId(), request.getSourceAccountId(), request.getAmount());
         transferRepository.persist(transfer);
         executeTransfer(transfer);
@@ -63,9 +63,10 @@ public final class MoneyTransferService {
         }
     }
 
-    private void validateAccountsForTransfer(final TransferRequest request) {
-        //Get account throws not found if account does not exists
-        getAccount(request.getSourceAccountId());
-        getAccount(request.getDestinationAccountId());
+    private void checkIfAccountsExistsOrNot(final UUID... accountIds) {
+        for (UUID accountId : accountIds) {
+            //Get account throws not found if account does not exists
+            getAccount(accountId);
+        }
     }
 }
