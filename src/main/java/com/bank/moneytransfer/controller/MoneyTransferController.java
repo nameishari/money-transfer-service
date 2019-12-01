@@ -1,7 +1,7 @@
 package com.bank.moneytransfer.controller;
 
-import com.bank.moneytransfer.domain.Account;
-import com.bank.moneytransfer.domain.Transfer;
+import com.bank.moneytransfer.model.Account;
+import com.bank.moneytransfer.model.Transfer;
 import com.bank.moneytransfer.dto.request.CreateAccountRequest;
 import com.bank.moneytransfer.dto.request.TransferRequest;
 import com.bank.moneytransfer.exception.BadRequestException;
@@ -49,7 +49,7 @@ public class MoneyTransferController {
         try {
             return UUID.fromString(uuidString);
         } catch (IllegalArgumentException ex) {
-            throw new BadRequestException("Invalid uuid");
+            throw new BadRequestException(String.format("Invalid id - %s", uuidString));
         }
     }
 }

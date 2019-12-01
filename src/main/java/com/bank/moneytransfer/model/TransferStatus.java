@@ -1,4 +1,4 @@
-package com.bank.moneytransfer.domain;
+package com.bank.moneytransfer.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

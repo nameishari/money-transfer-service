@@ -1,9 +1,9 @@
 package com.bank.moneytransfer.controller;
 
 import com.bank.moneytransfer.AbstractIntegrationTest;
-import com.bank.moneytransfer.domain.Account;
-import com.bank.moneytransfer.domain.Transfer;
-import com.bank.moneytransfer.domain.TransferStatus;
+import com.bank.moneytransfer.model.Account;
+import com.bank.moneytransfer.model.Transfer;
+import com.bank.moneytransfer.model.TransferStatus;
 import com.bank.moneytransfer.dto.request.CreateAccountRequest;
 import com.bank.moneytransfer.dto.request.TransferRequest;
 import com.bank.moneytransfer.repository.AccountRepository;

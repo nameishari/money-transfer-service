@@ -1,8 +1,8 @@
 package com.bank.moneytransfer.service;
 
-import com.bank.moneytransfer.domain.Account;
-import com.bank.moneytransfer.domain.Transfer;
-import com.bank.moneytransfer.domain.TransferStatus;
+import com.bank.moneytransfer.model.Account;
+import com.bank.moneytransfer.model.Transfer;
+import com.bank.moneytransfer.model.TransferStatus;
 import com.bank.moneytransfer.dto.request.CreateAccountRequest;
 import com.bank.moneytransfer.dto.request.TransferRequest;
 import com.bank.moneytransfer.exception.NotEnoughFundsException;
@@ -32,6 +32,14 @@ public final class MoneyTransferService {
         return accountRepository.findOneById(id);
     }
 
+    /***
+     *  Transfer money from one account to another.
+     *  STEPS:
+     *   1) validate if accounts exists
+     *   2) creates a transfer with open status
+     *   3.1) execute the transfer, update transfer status if it's done
+     *   3.2) If funds are less update the status to NOT_ENOUGH_FUNDS and throw
+     */
     public Transfer makeTransfer(final TransferRequest request) {
         validateAccountsForTransfer(request);
         Transfer transfer = Transfer.newTransfer(request.getDestinationAccountId(), request.getSourceAccountId(), request.getAmount());

@@ -1,4 +1,4 @@
-package com.bank.moneytransfer.domain;
+package com.bank.moneytransfer.model;
 
 import com.bank.moneytransfer.exception.NotEnoughFundsException;
 import com.bank.moneytransfer.utils.BigDecimalUtils;
@@ -12,7 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public final class Account {
 
-    //For simplicity Account domain contains only id and balance
+    //For simplicity Account contains only id and balance
 
     private UUID id;
 

@@ -1,7 +1,7 @@
 package com.bank.moneytransfer.repository;
 
-import com.bank.moneytransfer.domain.Account;
-import com.bank.moneytransfer.domain.Transfer;
+import com.bank.moneytransfer.model.Account;
+import com.bank.moneytransfer.model.Transfer;
 import com.bank.moneytransfer.exception.NotFoundException;
 import com.bank.moneytransfer.jooq.Tables;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,6 @@ import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
@@ -41,6 +40,7 @@ public class AccountRepository {
         jooqContext.transaction(configuration -> {
             DSLContext context = DSL.using(configuration);
 
+            // Applying pessimistic lock
             Map<UUID, Account> lockedAccounts = context.selectFrom(Tables.ACCOUNT)
                     .where(Tables.ACCOUNT.ID.in(asList(transfer.getDestinationAccountId(), transfer.getSourceAccountId()))).forUpdate()
                     .fetch(r -> new Account(r.getId(), r.getBalance()))

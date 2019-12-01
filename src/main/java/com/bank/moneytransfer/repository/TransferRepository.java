@@ -1,7 +1,7 @@
 package com.bank.moneytransfer.repository;
 
-import com.bank.moneytransfer.domain.Transfer;
-import com.bank.moneytransfer.domain.TransferStatus;
+import com.bank.moneytransfer.model.Transfer;
+import com.bank.moneytransfer.model.TransferStatus;
 import com.bank.moneytransfer.exception.NotFoundException;
 import com.bank.moneytransfer.jooq.Tables;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,7 @@ import org.jooq.DSLContext;
 
 import java.util.List;
 import java.util.UUID;
-import static com.bank.moneytransfer.domain.TransferStatus.valueOf;
+import static com.bank.moneytransfer.model.TransferStatus.valueOf;
 
 @Slf4j
 @RequiredArgsConstructor
